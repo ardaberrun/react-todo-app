@@ -7,8 +7,16 @@ const Header = ({ date }) => {
   const [todoName, setTodoName] = useState("");
 
   const handleClick = () => {
-    context.addTodo(todoName);
+    //context.addTodo(todoName);
     setTodoName("");
+    context.dispatch({ type: "ADD_TODO", payload: todoName });
+  };
+
+  const handlePress = (e) => {
+    if (e.keyCode === 13) {
+      setTodoName("");
+      context.dispatch({ type: "ADD_TODO", payload: todoName });
+    }
   };
 
   return (
@@ -17,12 +25,17 @@ const Header = ({ date }) => {
         <div className="row">
           <div className="col-lg-8 col-sm-12">
             <h4>{date}</h4>
-            <p className="blue">{context.incompleteTodoLength} Active Tasks </p>
+            <p className="blue">
+              {context.state.filter((item) => !item.complete).length} Active
+              Tasks{" "}
+            </p>
             <input
               className="header-input"
               type="text"
               placeholder="Enter a task"
+              value={todoName}
               onChange={(e) => setTodoName(e.target.value)}
+              onKeyDown={handlePress}
             />
             <button onClick={handleClick} className="header-button">
               Add Task

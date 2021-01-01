@@ -1,53 +1,53 @@
 import React, { useContext } from "react";
 import "../styles.css";
-import { FaRegTrashAlt, FaCheckCircle } from "react-icons/fa";
-import { VscDebugRestart } from "react-icons/vsc";
 import { TodoContext } from "../context/TodoContext";
+import TaskItem from "./TaskItem";
 
 const TaskList = () => {
   const context = useContext(TodoContext);
-  console.log(context);
+  //console.log(context);
 
   return (
     <div className="container p-3">
       <ul className="task-list">
-        {context.incompleteTodoLength === 0 && !context.active ? (
+        {context.state.filter((item) => !item.complete).length === 0 &&
+        !context.active ? (
           <li className="task-list-item">
             You currently have <span className="blue">0</span> tasks. Add a task
             to get started!
           </li>
         ) : !context.active ? (
-          context.todos.map(
+          context.state.map(
             (todo) =>
               !todo.complete && (
-                <li key={todo.id} className="task-list-item ">
-                  <FaCheckCircle
-                    onClick={() => context.toggleTodo(todo)}
-                    className="check-icon"
-                  />{" "}
-                  {todo.todo}
-                  <FaRegTrashAlt
-                    onClick={() => context.removeTodo(todo)}
-                    className="trash-icon"
-                  />
-                </li>
+                <TaskItem
+                  key={todo.id}
+                  name={todo.name}
+                  complete={false}
+                  toggle={() =>
+                    context.dispatch({ type: "TOGGLE_TODO", payload: todo.id })
+                  }
+                  remove={() =>
+                    context.dispatch({ type: "REMOVE_TODO", payload: todo.id })
+                  }
+                />
               )
           )
         ) : (
-          context.todos.map(
+          context.state.map(
             (todo) =>
               todo.complete && (
-                <li key={todo.id} className="task-list-item complete">
-                  <VscDebugRestart
-                    onClick={() => context.toggleTodo(todo)}
-                    className="restart-icon"
-                  />{" "}
-                  {todo.todo}
-                  <FaRegTrashAlt
-                    onClick={() => context.removeTodo(todo)}
-                    className="trash-icon"
-                  />
-                </li>
+                <TaskItem
+                  key={todo.id}
+                  name={todo.name}
+                  complete={true}
+                  toggle={() =>
+                    context.dispatch({ type: "TOGGLE_TODO", payload: todo.id })
+                  }
+                  remove={() =>
+                    context.dispatch({ type: "REMOVE_TODO", payload: todo.id })
+                  }
+                />
               )
           )
         )}
@@ -56,4 +56,4 @@ const TaskList = () => {
   );
 };
 
-export default TaskList;
+export default TaskList; 
